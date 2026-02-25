@@ -1,0 +1,83 @@
+{
+  "name": "aelf-node-skill",
+  "description": "AElf node tools for chain query, contract view/send, fee estimate, and node registry management.",
+  "tools": [
+    {
+      "name": "aelf-get-chain-status",
+      "description": "Get chain status from a node",
+      "command": "bun",
+      "args": ["run", "aelf_node_skill.ts", "get-chain-status"],
+      "cwd": "."
+    },
+    {
+      "name": "aelf-get-block-height",
+      "description": "Get latest block height from a node",
+      "command": "bun",
+      "args": ["run", "aelf_node_skill.ts", "get-block-height"],
+      "cwd": "."
+    },
+    {
+      "name": "aelf-get-block",
+      "description": "Get block detail by block hash",
+      "command": "bun",
+      "args": ["run", "aelf_node_skill.ts", "get-block"],
+      "cwd": "."
+    },
+    {
+      "name": "aelf-get-transaction-result",
+      "description": "Get transaction result by transaction id",
+      "command": "bun",
+      "args": ["run", "aelf_node_skill.ts", "get-transaction-result"],
+      "cwd": "."
+    },
+    {
+      "name": "aelf-get-contract-view-methods",
+      "description": "List contract view methods via REST adapter",
+      "command": "bun",
+      "args": ["run", "aelf_node_skill.ts", "get-contract-view-methods"],
+      "cwd": "."
+    },
+    {
+      "name": "aelf-get-system-contract-address",
+      "description": "Get system contract address by name",
+      "command": "bun",
+      "args": ["run", "aelf_node_skill.ts", "get-system-contract-address"],
+      "cwd": "."
+    },
+    {
+      "name": "aelf-call-contract-view",
+      "description": "Call a contract view method via aelf-sdk",
+      "command": "bun",
+      "args": ["run", "aelf_node_skill.ts", "call-contract-view"],
+      "cwd": "."
+    },
+    {
+      "name": "aelf-send-contract-transaction",
+      "description": "Send a contract transaction via aelf-sdk",
+      "command": "bun",
+      "args": ["run", "aelf_node_skill.ts", "send-contract-transaction"],
+      "cwd": "."
+    },
+    {
+      "name": "aelf-estimate-transaction-fee",
+      "description": "Estimate transaction fee via REST + SDK fallback",
+      "command": "bun",
+      "args": ["run", "aelf_node_skill.ts", "estimate-transaction-fee"],
+      "cwd": "."
+    },
+    {
+      "name": "aelf-import-node",
+      "description": "Import or update a custom node profile",
+      "command": "bun",
+      "args": ["run", "aelf_node_skill.ts", "import-node"],
+      "cwd": "."
+    },
+    {
+      "name": "aelf-list-nodes",
+      "description": "List imported and available nodes",
+      "command": "bun",
+      "args": ["run", "aelf_node_skill.ts", "list-nodes"],
+      "cwd": "."
+    }
+  ]
+}
