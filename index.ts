@@ -13,7 +13,7 @@ export { callContractView, sendContractTransaction } from './src/core/contract.j
 export { importNode, listNodes } from './src/core/node-registry.js';
 
 export { resolveNode, listAvailableNodes } from './lib/node-router.js';
-export { clearSdkCaches } from './lib/sdk-client.js';
+export { clearSdkCaches, clearSdkCacheForRpc } from './lib/sdk-client.js';
 export type {
   SkillResponse,
   SkillError,

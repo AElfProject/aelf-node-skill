@@ -9,6 +9,7 @@ afterEach(() => {
 
 describe('contract view method list path compatibility', () => {
   it('must call /api/contract/contractViewMethodList instead of legacy blockChain path', async () => {
+    const contractAddress = '7RzVGiuVWkvL4VfVHdZfQF2Tri3sgLe9U991bohHFfSRZXuGX';
     let requestedUrl = '';
     globalThis.fetch = (async (input: RequestInfo | URL) => {
       requestedUrl = String(input);
@@ -22,7 +23,7 @@ describe('contract view method list path compatibility', () => {
 
     const result = await getContractViewMethods({
       rpcUrl: 'https://mock-node.test',
-      contractAddress: 'mock-address',
+      contractAddress,
     });
 
     expect(result.ok).toBe(true);

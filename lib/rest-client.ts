@@ -1,5 +1,6 @@
 import { HttpStatusError } from './errors.js';
 import { getRetryCount, getTimeoutMs } from './config.js';
+import { sleep } from './utils/time.js';
 
 export interface RestRequest {
   method: 'GET' | 'POST' | 'DELETE' | 'PUT' | 'PATCH';
@@ -22,19 +23,25 @@ function toQueryString(query?: Record<string, string | number | boolean | undefi
 
 function parseText(text: string): unknown {
   if (!text) return null;
-  try {
-    return JSON.parse(text);
-  } catch {
-    const num = Number(text);
-    if (!Number.isNaN(num) && text.trim() !== '') {
-      return num;
-    }
+  const trimmed = text.trim();
+
+  const shouldParseJson =
+    trimmed.startsWith('{') ||
+    trimmed.startsWith('[') ||
+    trimmed.startsWith('"') ||
+    trimmed === 'true' ||
+    trimmed === 'false' ||
+    trimmed === 'null';
+
+  if (!shouldParseJson) {
     return text;
   }
-}
 
-function sleep(ms: number): Promise<void> {
-  return new Promise(resolve => setTimeout(resolve, ms));
+  try {
+    return JSON.parse(trimmed);
+  } catch {
+    return text;
+  }
 }
 
 export class RestClient {

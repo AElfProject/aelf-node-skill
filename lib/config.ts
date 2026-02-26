@@ -4,6 +4,9 @@ import type { NodeProfile } from './types.js';
 
 const DEFAULT_TIMEOUT_MS = 10_000;
 const DEFAULT_RETRY = 1;
+const DEFAULT_SDK_INSTANCE_CACHE_MAX = 32;
+const DEFAULT_SDK_CONTRACT_CACHE_MAX = 256;
+const DEFAULT_REST_CLIENT_CACHE_MAX = 64;
 
 export const DEFAULT_NODES: NodeProfile[] = [
   {
@@ -22,14 +25,30 @@ export const DEFAULT_NODES: NodeProfile[] = [
   },
 ];
 
+function getPositiveIntFromEnv(name: string, defaultValue: number): number {
+  const value = Number(process.env[name]);
+  return Number.isFinite(value) && value > 0 ? Math.floor(value) : defaultValue;
+}
+
 export function getTimeoutMs(): number {
-  const value = Number(process.env.AELF_NODE_TIMEOUT_MS);
-  return Number.isFinite(value) && value > 0 ? value : DEFAULT_TIMEOUT_MS;
+  return getPositiveIntFromEnv('AELF_NODE_TIMEOUT_MS', DEFAULT_TIMEOUT_MS);
 }
 
 export function getRetryCount(): number {
   const value = Number(process.env.AELF_NODE_RETRY);
   return Number.isFinite(value) && value >= 0 ? Math.floor(value) : DEFAULT_RETRY;
+}
+
+export function getSdkInstanceCacheMax(): number {
+  return getPositiveIntFromEnv('AELF_SDK_INSTANCE_CACHE_MAX', DEFAULT_SDK_INSTANCE_CACHE_MAX);
+}
+
+export function getSdkContractCacheMax(): number {
+  return getPositiveIntFromEnv('AELF_SDK_CONTRACT_CACHE_MAX', DEFAULT_SDK_CONTRACT_CACHE_MAX);
+}
+
+export function getRestClientCacheMax(): number {
+  return getPositiveIntFromEnv('AELF_REST_CLIENT_CACHE_MAX', DEFAULT_REST_CLIENT_CACHE_MAX);
 }
 
 export function getRegistryPath(): string {
