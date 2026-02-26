@@ -1,5 +1,6 @@
 import { DEFAULT_NODES, getEnvOverrideNodes } from './config.js';
 import { listImportedNodes } from './node-registry.js';
+import { validateChainTargetInput } from './validators.js';
 import type { NodeProfile, ResolveNodeInput, ResolveNodeResult } from './types.js';
 
 function sanitize(input: NodeProfile[]): NodeProfile[] {
@@ -14,6 +15,8 @@ export async function listAvailableNodes(): Promise<NodeProfile[]> {
 }
 
 export async function resolveNode(input: ResolveNodeInput): Promise<ResolveNodeResult> {
+  validateChainTargetInput(input);
+
   if (input.rpcUrl) {
     return {
       node: {

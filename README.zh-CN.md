@@ -2,7 +2,7 @@
 
 [中文](./README.zh-CN.md) | [English](./README.md)
 
-AElf Node Skill 提供 MCP、CLI、SDK 三种接口，基于 `SDK-first + REST fallback` 架构访问 AElf 公共节点。
+AElf Node Skill 提供 MCP、CLI、SDK 三种接口，采用“读走 REST、合约执行走 SDK、手续费估算选择性 fallback”的架构访问 AElf 公共节点。
 
 ## 功能
 
@@ -85,9 +85,13 @@ cp .env.example .env
 ```
 
 - `AELF_PRIVATE_KEY`：写操作必填
+- MCP 模式仅从环境变量读取 `AELF_PRIVATE_KEY`（不接受 tool 入参传私钥）
 - `AELF_NODE_AELF_RPC_URL`：可选，覆盖 AELF 节点
 - `AELF_NODE_TDVV_RPC_URL`：可选，覆盖 tDVV 节点
 - `AELF_NODE_REGISTRY_PATH`：可选，自定义节点注册表路径
+- `AELF_SDK_INSTANCE_CACHE_MAX`：可选，SDK 实例缓存上限（默认 `32`）
+- `AELF_SDK_CONTRACT_CACHE_MAX`：可选，SDK 合约缓存上限（默认 `256`）
+- `AELF_REST_CLIENT_CACHE_MAX`：可选，REST 客户端缓存上限（默认 `64`）
 
 ## Tool 列表
 

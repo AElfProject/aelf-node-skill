@@ -19,7 +19,7 @@ const program = new Command();
 
 program
   .name('aelf-node-setup')
-  .description('Configure @aelfproject/aelf-node-skill for Claude/Cursor/OpenClaw')
+  .description('Configure @blockchain-forever/aelf-node-skill for Claude/Cursor/OpenClaw')
   .version('0.1.0');
 
 const withCommonMcpOptions = (command: Command) =>

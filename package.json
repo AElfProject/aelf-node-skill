@@ -1,7 +1,7 @@
 {
-  "name": "@aelfproject/aelf-node-skill",
+  "name": "@blockchain-forever/aelf-node-skill",
   "version": "0.1.0",
-  "description": "AElf Node Skill for AI agents: MCP, CLI, and SDK with SDK-first + REST fallback architecture.",
+  "description": "AElf Node Skill for AI agents: REST for reads, SDK for contract execution, and selective fallback for fee estimate.",
   "type": "module",
   "main": "index.ts",
   "exports": {

@@ -3,7 +3,7 @@
   "configVersion": 1,
   "workspaces": {
     "": {
-      "name": "@aelfproject/aelf-node-skill",
+      "name": "@blockchain-forever/aelf-node-skill",
       "dependencies": {
         "@modelcontextprotocol/sdk": "^1.26.0",
         "aelf-sdk": "3.5.1-beta.0",

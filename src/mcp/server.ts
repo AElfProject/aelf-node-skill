@@ -2,6 +2,7 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { z } from 'zod';
+import packageJson from '../../package.json';
 import {
   callContractView,
   estimateTransactionFee,
@@ -18,7 +19,7 @@ import {
 
 const server = new McpServer({
   name: 'aelf-node-skill',
-  version: '0.1.0',
+  version: packageJson.version,
 });
 
 function asMcpResult(data: unknown) {
@@ -35,7 +36,7 @@ function asMcpResult(data: unknown) {
 const chainTargetSchema = {
   chainId: z.string().optional().describe('Chain id, e.g. AELF or tDVV'),
   nodeId: z.string().optional().describe('Optional imported node id'),
-  rpcUrl: z.string().optional().describe('Direct rpc url override'),
+  rpcUrl: z.string().optional().describe('Direct rpc url override, only http/https is accepted'),
 };
 
 server.registerTool(
@@ -122,13 +123,12 @@ server.registerTool(
 server.registerTool(
   'aelf_send_contract_transaction',
   {
-    description: 'Send contract transaction via aelf-sdk with EOA signer and optional tx polling.',
+    description: 'Send contract transaction via aelf-sdk with env-based signer and optional tx polling.',
     inputSchema: {
       ...chainTargetSchema,
       contractAddress: z.string().describe('Contract address'),
       methodName: z.string().describe('Method name'),
       params: z.record(z.unknown()).optional(),
-      privateKey: z.string().optional().describe('Private key override. Defaults to AELF_PRIVATE_KEY env.'),
       waitForMined: z.boolean().optional().default(true),
       maxRetries: z.number().int().optional().default(20),
       retryIntervalMs: z.number().int().optional().default(1500),
@@ -147,7 +147,6 @@ server.registerTool(
       contractAddress: z.string().optional(),
       methodName: z.string().optional(),
       params: z.record(z.unknown()).optional(),
-      privateKey: z.string().optional(),
     },
   },
   async input => asMcpResult(await estimateTransactionFee(input)),

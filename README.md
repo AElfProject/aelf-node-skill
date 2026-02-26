@@ -2,7 +2,7 @@
 
 [English](./README.md) | [中文](./README.zh-CN.md)
 
-AElf Node Skill provides MCP, CLI, and SDK interfaces for AElf public nodes with a `SDK-first + REST fallback` architecture.
+AElf Node Skill provides MCP, CLI, and SDK interfaces for AElf public nodes with `REST for reads, SDK for contract execution, and selective fallback for fee estimate`.
 
 ## Features
 
@@ -85,9 +85,13 @@ cp .env.example .env
 ```
 
 - `AELF_PRIVATE_KEY`: required for write operations
+- `AELF_PRIVATE_KEY` is read from environment only in MCP mode (no private key tool input)
 - `AELF_NODE_AELF_RPC_URL`: optional override for AELF node
 - `AELF_NODE_TDVV_RPC_URL`: optional override for tDVV node
 - `AELF_NODE_REGISTRY_PATH`: optional custom registry path
+- `AELF_SDK_INSTANCE_CACHE_MAX`: optional max SDK instance cache size (default `32`)
+- `AELF_SDK_CONTRACT_CACHE_MAX`: optional max SDK contract cache size (default `256`)
+- `AELF_REST_CLIENT_CACHE_MAX`: optional max REST client cache size (default `64`)
 
 ## Tool List
 

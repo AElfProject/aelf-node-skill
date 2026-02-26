@@ -1,7 +1,19 @@
-import { getEoaPrivateKey } from '../../lib/config.js';
+import {
+  getEoaPrivateKey,
+  getRestClientCacheMax,
+  getRetryCount,
+  getTimeoutMs,
+} from '../../lib/config.js';
 import { resolveNode } from '../../lib/node-router.js';
 import { RestClient } from '../../lib/rest-client.js';
 import { buildSignedTransaction, estimateTransactionFeeBySdk } from '../../lib/sdk-client.js';
+import { LruCache } from '../../lib/utils/lru.js';
+import {
+  validateChainTargetInput,
+  validateContractAddress,
+  validateMethodName,
+  validateRequiredText,
+} from '../../lib/validators.js';
 import { executeWithResponse } from './common.js';
 import type {
   ChainTargetInput,
@@ -13,12 +25,29 @@ import type {
   SkillResponse,
 } from '../../lib/types.js';
 
+const restClientCache = new LruCache<string, RestClient>(getRestClientCacheMax());
+
+function getRestClientKey(rpcUrl: string, timeoutMs: number, retry: number): string {
+  return `${rpcUrl}|${timeoutMs}|${retry}`;
+}
+
 function clientFor(rpcUrl: string): RestClient {
-  return new RestClient(rpcUrl);
+  const timeoutMs = getTimeoutMs();
+  const retry = getRetryCount();
+  const key = getRestClientKey(rpcUrl, timeoutMs, retry);
+  const cached = restClientCache.get(key);
+  if (cached) {
+    return cached;
+  }
+
+  const client = new RestClient(rpcUrl, timeoutMs, retry);
+  restClientCache.set(key, client);
+  return client;
 }
 
 export async function getChainStatus(input: ChainTargetInput = {}): Promise<SkillResponse<unknown>> {
   return executeWithResponse(async () => {
+    validateChainTargetInput(input);
     const { node } = await resolveNode(input);
     return clientFor(node.rpcUrl).request({ method: 'GET', path: 'blockChain/chainStatus' });
   }, 'GET_CHAIN_STATUS_FAILED');
@@ -26,6 +55,7 @@ export async function getChainStatus(input: ChainTargetInput = {}): Promise<Skil
 
 export async function getBlockHeight(input: ChainTargetInput = {}): Promise<SkillResponse<unknown>> {
   return executeWithResponse(async () => {
+    validateChainTargetInput(input);
     const { node } = await resolveNode(input);
     return clientFor(node.rpcUrl).request({ method: 'GET', path: 'blockChain/blockHeight' });
   }, 'GET_BLOCK_HEIGHT_FAILED');
@@ -33,6 +63,8 @@ export async function getBlockHeight(input: ChainTargetInput = {}): Promise<Skil
 
 export async function getBlock(input: GetBlockInput): Promise<SkillResponse<unknown>> {
   return executeWithResponse(async () => {
+    validateChainTargetInput(input);
+    validateRequiredText(input.blockHash, 'blockHash');
     const { node } = await resolveNode(input);
     return clientFor(node.rpcUrl).request({
       method: 'GET',
@@ -47,6 +79,8 @@ export async function getBlock(input: GetBlockInput): Promise<SkillResponse<unkn
 
 export async function getTransactionResult(input: GetTransactionResultInput): Promise<SkillResponse<unknown>> {
   return executeWithResponse(async () => {
+    validateChainTargetInput(input);
+    validateRequiredText(input.transactionId, 'transactionId');
     const { node } = await resolveNode(input);
     return clientFor(node.rpcUrl).request({
       method: 'GET',
@@ -60,6 +94,8 @@ export async function getTransactionResult(input: GetTransactionResultInput): Pr
 
 export async function getContractViewMethods(input: GetContractViewMethodsInput): Promise<SkillResponse<unknown>> {
   return executeWithResponse(async () => {
+    validateChainTargetInput(input);
+    validateContractAddress(input.contractAddress);
     const { node } = await resolveNode(input);
     return clientFor(node.rpcUrl).request({
       method: 'GET',
@@ -73,6 +109,8 @@ export async function getContractViewMethods(input: GetContractViewMethodsInput)
 
 export async function getSystemContractAddress(input: GetSystemContractAddressInput): Promise<SkillResponse<unknown>> {
   return executeWithResponse(async () => {
+    validateChainTargetInput(input);
+    validateRequiredText(input.contractName, 'contractName');
     const { node } = await resolveNode(input);
     return clientFor(node.rpcUrl).request({
       method: 'GET',
@@ -93,6 +131,9 @@ async function resolveRawTransaction(input: EstimateTransactionFeeInput, rpcUrl:
     throw new Error('Either rawTransaction or contractAddress + methodName is required');
   }
 
+  validateContractAddress(input.contractAddress);
+  validateMethodName(input.methodName);
+
   const privateKey = getEoaPrivateKey(input.privateKey);
   if (!privateKey) {
     throw new Error('AELF_PRIVATE_KEY is required when rawTransaction is not provided');
@@ -109,6 +150,7 @@ async function resolveRawTransaction(input: EstimateTransactionFeeInput, rpcUrl:
 
 export async function estimateTransactionFee(input: EstimateTransactionFeeInput): Promise<SkillResponse<unknown>> {
   return executeWithResponse(async () => {
+    validateChainTargetInput(input);
     const { node } = await resolveNode(input);
     const rawTransaction = await resolveRawTransaction(input, node.rpcUrl);
     const client = clientFor(node.rpcUrl);

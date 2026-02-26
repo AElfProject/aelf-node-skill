@@ -46,7 +46,7 @@ function parseCoreLineHits(lcovText: string): LineHits {
 
 function main() {
   const lcovFile = process.env.CORE_COVERAGE_FILE || 'coverage/lcov.info';
-  const threshold = Number(process.env.CORE_COVERAGE_THRESHOLD || '70');
+  const threshold = Number(process.env.CORE_COVERAGE_THRESHOLD || '80');
   const lcovPath = resolve(process.cwd(), lcovFile);
 
   if (!existsSync(lcovPath)) {

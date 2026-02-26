@@ -11,6 +11,7 @@ import {
 
 const originalFetch = globalThis.fetch;
 const originalPrivateKey = process.env.AELF_PRIVATE_KEY;
+const validContractAddress = '7RzVGiuVWkvL4VfVHdZfQF2Tri3sgLe9U991bohHFfSRZXuGX';
 
 function jsonResponse(data: unknown, status = 200): Response {
   return new Response(JSON.stringify(data), {
@@ -49,7 +50,7 @@ describe('query core flows', () => {
         return jsonResponse({ Status: 'MINED' });
       }
       if (url.includes('/api/contract/systemContractAddressByName?')) {
-        return jsonResponse('2dnGfQx...');
+        return jsonResponse(validContractAddress);
       }
       if (url.includes('/api/contract/contractViewMethodList?')) {
         return jsonResponse(['GetBalance']);
@@ -68,7 +69,7 @@ describe('query core flows', () => {
     });
     const methods = await getContractViewMethods({
       rpcUrl: 'https://mock-node.test',
-      contractAddress: '2dnGfQx...',
+      contractAddress: validContractAddress,
     });
 
     expect(chain.ok).toBe(true);
@@ -120,7 +121,7 @@ describe('query core flows', () => {
 
     const result = await estimateTransactionFee({
       rpcUrl: 'https://mock-node.test',
-      contractAddress: '2dnGfQx...',
+      contractAddress: validContractAddress,
       methodName: 'Transfer',
       params: {
         to: 'address',
