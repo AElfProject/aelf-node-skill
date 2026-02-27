@@ -2,6 +2,9 @@
 
 [English](./README.md) | [中文](./README.zh-CN.md)
 
+[![Unit Tests](https://github.com/AElfProject/aelf-node-skill/actions/workflows/test.yml/badge.svg)](https://github.com/AElfProject/aelf-node-skill/actions/workflows/test.yml)
+[![Coverage](https://img.shields.io/endpoint?url=https://AElfProject.github.io/aelf-node-skill/coverage.json)](https://AElfProject.github.io/aelf-node-skill/coverage.json)
+
 AElf Node Skill provides MCP, CLI, and SDK interfaces for AElf public nodes with `REST for reads, SDK for contract execution, and selective fallback for fee estimate`.
 
 ## Features
@@ -21,6 +24,27 @@ AElf Node Skill provides MCP, CLI, and SDK interfaces for AElf public nodes with
 
 ```bash
 bun install
+```
+
+## Usage
+
+### MCP
+
+```bash
+bun run mcp
+```
+
+### CLI
+
+```bash
+bun run cli get-chain-status --chain-id AELF
+```
+
+### OpenClaw
+
+```bash
+bun run build:openclaw
+bun run build:openclaw:check
 ```
 
 ## Quick Start
@@ -118,3 +142,19 @@ MCP tool names:
 - `src/mcp/server.ts`: MCP adapter
 - `aelf_node_skill.ts`: CLI adapter
 - `index.ts`: SDK exports
+
+## Testing
+
+```bash
+bun run test
+bun run test:coverage:ci
+```
+
+## Security
+
+- Never put `AELF_PRIVATE_KEY` in prompts or channel outputs.
+- Use environment variables for all secrets.
+
+## License
+
+MIT
