@@ -40,7 +40,8 @@
     "test:coverage:ci": "COVERAGE_MIN_LINES=85 COVERAGE_MIN_FUNCS=80 bun run test:unit:coverage && bun run coverage:gate",
     "build:openclaw": "bun run bin/generate-openclaw.ts",
     "build:openclaw:check": "bun run bin/generate-openclaw.ts --check",
-    "coverage:badge": "bun run bin/generate-coverage-badge.ts"
+    "coverage:badge": "bun run bin/generate-coverage-badge.ts",
+    "deps:check": "bun run scripts/check-deps-baseline.ts"
   },
   "keywords": [
     "aelf",
@@ -64,7 +65,7 @@
   "license": "MIT",
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.26.0",
-    "aelf-sdk": "3.5.1-beta.0",
+    "aelf-sdk": "^3.5.1-beta.0",
     "commander": "^12.1.0",
     "zod": "^3.24.0"
   },
