@@ -2,6 +2,9 @@
 
 [中文](./README.zh-CN.md) | [English](./README.md)
 
+[![Unit Tests](https://github.com/AElfProject/aelf-node-skill/actions/workflows/test.yml/badge.svg)](https://github.com/AElfProject/aelf-node-skill/actions/workflows/test.yml)
+[![Coverage](https://img.shields.io/endpoint?url=https://AElfProject.github.io/aelf-node-skill/coverage.json)](https://AElfProject.github.io/aelf-node-skill/coverage.json)
+
 AElf Node Skill 提供 MCP、CLI、SDK 三种接口，采用“读走 REST、合约执行走 SDK、手续费估算选择性 fallback”的架构访问 AElf 公共节点。
 
 ## 功能
@@ -21,6 +24,27 @@ AElf Node Skill 提供 MCP、CLI、SDK 三种接口，采用“读走 REST、合
 
 ```bash
 bun install
+```
+
+## 使用方式
+
+### MCP
+
+```bash
+bun run mcp
+```
+
+### CLI
+
+```bash
+bun run cli get-chain-status --chain-id AELF
+```
+
+### OpenClaw
+
+```bash
+bun run build:openclaw
+bun run build:openclaw:check
 ```
 
 ## 快速开始
@@ -118,3 +142,19 @@ MCP tool 名称：
 - `src/mcp/server.ts`：MCP 入口
 - `aelf_node_skill.ts`：CLI 入口
 - `index.ts`：SDK 导出
+
+## 测试
+
+```bash
+bun run test
+bun run test:coverage:ci
+```
+
+## 安全
+
+- 不要在对话输出中暴露 `AELF_PRIVATE_KEY`。
+- 所有密钥均通过环境变量管理。
+
+## License
+
+MIT
