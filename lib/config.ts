@@ -2,6 +2,18 @@ import { homedir } from 'node:os';
 import { join } from 'node:path';
 import type { NodeProfile } from './types.js';
 
+export const CHAIN_IDS = {
+  AELF: 'AELF',
+  TDVV: 'tDVV',
+} as const;
+
+export const DEFAULT_CHAIN_ID = CHAIN_IDS.AELF;
+
+export const DEFAULT_RPC_URLS: Record<(typeof CHAIN_IDS)[keyof typeof CHAIN_IDS], string> = {
+  [CHAIN_IDS.AELF]: 'https://aelf-public-node.aelf.io',
+  [CHAIN_IDS.TDVV]: 'https://tdvv-public-node.aelf.io',
+};
+
 const DEFAULT_TIMEOUT_MS = 10_000;
 const DEFAULT_RETRY = 1;
 const DEFAULT_SDK_INSTANCE_CACHE_MAX = 32;
@@ -11,15 +23,15 @@ const DEFAULT_REST_CLIENT_CACHE_MAX = 64;
 export const DEFAULT_NODES: NodeProfile[] = [
   {
     id: 'default-aelf',
-    chainId: 'AELF',
-    rpcUrl: 'https://aelf-public-node.aelf.io',
+    chainId: CHAIN_IDS.AELF,
+    rpcUrl: DEFAULT_RPC_URLS[CHAIN_IDS.AELF],
     enabled: true,
     source: 'default',
   },
   {
     id: 'default-tdvv',
-    chainId: 'tDVV',
-    rpcUrl: 'https://tdvv-public-node.aelf.io',
+    chainId: CHAIN_IDS.TDVV,
+    rpcUrl: DEFAULT_RPC_URLS[CHAIN_IDS.TDVV],
     enabled: true,
     source: 'default',
   },
@@ -52,11 +64,11 @@ export function getRestClientCacheMax(): number {
 }
 
 export function getRegistryPath(): string {
-  return process.env.AELF_NODE_REGISTRY_PATH || join(homedir(), '.aelf-node-skill', 'nodes.json');
+  return process.env.AELF_NODE_REGISTRY_PATH ?? join(homedir(), '.aelf-node-skill', 'nodes.json');
 }
 
 export function getEoaPrivateKey(override?: string): string | undefined {
-  return override || process.env.AELF_PRIVATE_KEY;
+  return override ?? process.env.AELF_PRIVATE_KEY;
 }
 
 export function getEnvOverrideNodes(): NodeProfile[] {
@@ -64,7 +76,7 @@ export function getEnvOverrideNodes(): NodeProfile[] {
   if (process.env.AELF_NODE_AELF_RPC_URL) {
     result.push({
       id: 'env-aelf',
-      chainId: 'AELF',
+      chainId: CHAIN_IDS.AELF,
       rpcUrl: process.env.AELF_NODE_AELF_RPC_URL,
       enabled: true,
       source: 'env',
@@ -73,7 +85,7 @@ export function getEnvOverrideNodes(): NodeProfile[] {
   if (process.env.AELF_NODE_TDVV_RPC_URL) {
     result.push({
       id: 'env-tdvv',
-      chainId: 'tDVV',
+      chainId: CHAIN_IDS.TDVV,
       rpcUrl: process.env.AELF_NODE_TDVV_RPC_URL,
       enabled: true,
       source: 'env',

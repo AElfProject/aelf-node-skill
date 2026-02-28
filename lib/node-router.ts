@@ -1,4 +1,4 @@
-import { DEFAULT_NODES, getEnvOverrideNodes } from './config.js';
+import { DEFAULT_CHAIN_ID, DEFAULT_NODES, getEnvOverrideNodes } from './config.js';
 import { listImportedNodes } from './node-registry.js';
 import { validateChainTargetInput } from './validators.js';
 import type { NodeProfile, ResolveNodeInput, ResolveNodeResult } from './types.js';
@@ -21,7 +21,7 @@ export async function resolveNode(input: ResolveNodeInput): Promise<ResolveNodeR
     return {
       node: {
         id: 'direct-rpc',
-        chainId: input.chainId || 'AELF',
+        chainId: input.chainId ?? DEFAULT_CHAIN_ID,
         rpcUrl: input.rpcUrl,
         enabled: true,
         source: 'direct',
@@ -40,7 +40,7 @@ export async function resolveNode(input: ResolveNodeInput): Promise<ResolveNodeR
     return { node, candidates };
   }
 
-  const chainId = input.chainId || 'AELF';
+  const chainId = input.chainId ?? DEFAULT_CHAIN_ID;
   const node = candidates.find(item => item.chainId === chainId);
   if (!node) {
     throw new Error(`No available node for chainId: ${chainId}`);
