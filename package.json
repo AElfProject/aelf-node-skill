@@ -1,6 +1,6 @@
 {
   "name": "@blockchain-forever/aelf-node-skill",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "AElf Node Skill for AI agents: REST for reads, SDK for contract execution, and selective fallback for fee estimate.",
   "type": "module",
   "main": "index.ts",
