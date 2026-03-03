@@ -159,7 +159,7 @@ describe('core/contract', () => {
     });
 
     expect(result.ok).toBe(false);
-    expect(result.error?.message.includes('AELF_PRIVATE_KEY is required for write operations')).toBe(true);
+    expect(result.error?.message.includes('no signer available from explicit/context/env')).toBe(true);
     expect(state.sendContractTransactionCalls.length).toBe(0);
   });
 

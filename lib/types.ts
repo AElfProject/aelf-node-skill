@@ -1,4 +1,17 @@
 export type ChainId = 'AELF' | 'tDVV' | string;
+export type SignerMode = 'auto' | 'explicit' | 'context' | 'env' | 'daemon';
+export type SignerProvider = 'explicit' | 'context' | 'env' | 'daemon';
+
+export type SignerContextInput = {
+  signerMode?: SignerMode;
+  walletType?: 'EOA' | 'CA';
+  address?: string;
+  password?: string;
+  privateKey?: string;
+  caHash?: string;
+  caAddress?: string;
+  network?: 'mainnet' | 'testnet';
+};
 
 export interface SkillError {
   code: string;
@@ -78,6 +91,8 @@ export interface SendContractTransactionInput extends ChainTargetInput {
   maxRetries?: number;
   retryIntervalMs?: number;
   privateKey?: string;
+  signer?: SignerContextInput;
+  signerContext?: SignerContextInput;
 }
 
 export interface EstimateTransactionFeeInput extends ChainTargetInput {
@@ -86,6 +101,8 @@ export interface EstimateTransactionFeeInput extends ChainTargetInput {
   methodName?: string;
   params?: Record<string, unknown>;
   privateKey?: string;
+  signer?: SignerContextInput;
+  signerContext?: SignerContextInput;
 }
 
 export interface ImportNodeInput {

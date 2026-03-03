@@ -131,6 +131,6 @@ describe('query core flows', () => {
 
     expect(result.ok).toBe(false);
     expect(result.error?.code).toBe('ESTIMATE_TRANSACTION_FEE_FAILED');
-    expect(result.error?.message.includes('AELF_PRIVATE_KEY is required when rawTransaction is not provided')).toBe(true);
+    expect(result.error?.message.includes('no signer available from explicit/context/env')).toBe(true);
   });
 });

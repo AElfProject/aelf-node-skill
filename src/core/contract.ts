@@ -4,6 +4,7 @@ import { callContractView as callContractViewBySdk, sendContractTransaction as s
 import { validateChainTargetInput, validateContractAddress, validateMethodName } from '../../lib/validators.js';
 import { executeWithResponse } from './common.js';
 import type { CallContractViewInput, SendContractTransactionInput, SkillResponse } from '../../lib/types.js';
+import { resolvePrivateKeyContext } from '../../lib/signer-context.js';
 
 export async function callContractView(input: CallContractViewInput): Promise<SkillResponse<unknown>> {
   return executeWithResponse(async () => {
@@ -23,10 +24,13 @@ export async function sendContractTransaction(input: SendContractTransactionInpu
     validateMethodName(input.methodName);
 
     const { node } = await resolveNode(input);
-    const privateKey = getEoaPrivateKey(input.privateKey);
-    if (!privateKey) {
-      throw new Error('AELF_PRIVATE_KEY is required for write operations');
-    }
+    const resolved = resolvePrivateKeyContext({
+      signerMode: 'auto',
+      ...(input.signer || {}),
+      ...(input.signerContext || {}),
+      privateKey: getEoaPrivateKey(input.privateKey),
+    });
+    const privateKey = resolved.privateKey;
 
     return sendContractTransactionBySdk(
       node.rpcUrl,

@@ -93,7 +93,9 @@ aelf-node-setup claude
       "command": "bun",
       "args": ["run", "/ABSOLUTE/PATH/TO/src/mcp/server.ts"],
       "env": {
-        "AELF_PRIVATE_KEY": "your_private_key_here"
+        "AELF_PRIVATE_KEY": "可选_env_回退私钥",
+        "PORTKEY_WALLET_PASSWORD": "可选钱包密码",
+        "PORTKEY_CA_KEYSTORE_PASSWORD": "可选keystore密码"
       }
     }
   }
@@ -108,8 +110,12 @@ aelf-node-setup claude
 cp .env.example .env
 ```
 
-- `AELF_PRIVATE_KEY`：写操作必填
-- MCP 模式仅从环境变量读取 `AELF_PRIVATE_KEY`（不接受 tool 入参传私钥）
+- `AELF_PRIVATE_KEY`：写操作的 env 回退私钥（可选）
+- 写操作工具（`aelf_send_contract_transaction`、`aelf_estimate_transaction_fee`）按 `explicit -> context -> env` 解析 signer
+- `PORTKEY_WALLET_PASSWORD`：EOA wallet context 的密码缓存（可选）
+- `PORTKEY_CA_KEYSTORE_PASSWORD`：CA keystore context 的密码缓存（可选）
+- `PORTKEY_SKILL_WALLET_CONTEXT_PATH`：active context 路径覆盖（默认 `~/.portkey/skill-wallet/context.v1.json`）
+- `signerMode=daemon` 仅预埋接口，本轮返回 `SIGNER_DAEMON_NOT_IMPLEMENTED`
 - `AELF_NODE_AELF_RPC_URL`：可选，覆盖 AELF 节点
 - `AELF_NODE_TDVV_RPC_URL`：可选，覆盖 tDVV 节点
 - `AELF_NODE_REGISTRY_PATH`：可选，自定义节点注册表路径
@@ -153,6 +159,7 @@ bun run test:coverage:ci
 ## 安全
 
 - 不要在对话输出中暴露 `AELF_PRIVATE_KEY`。
+- Active wallet context 不存明文私钥。
 - 所有密钥均通过环境变量管理。
 
 ## License
