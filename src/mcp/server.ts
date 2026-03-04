@@ -23,6 +23,34 @@ const server = new McpServer({
 });
 
 function asMcpResult(data: unknown) {
+  if (
+    data &&
+    typeof data === 'object' &&
+    'ok' in data &&
+    (data as { ok?: unknown }).ok === false
+  ) {
+    const record = data as Record<string, unknown>;
+    const error =
+      record.error && typeof record.error === 'object'
+        ? (record.error as Record<string, unknown>)
+        : {};
+    const code = typeof error.code === 'string' ? error.code : 'UNKNOWN_ERROR';
+    const message = typeof error.message === 'string' ? error.message : 'Unknown error';
+    return {
+      content: [
+        {
+          type: 'text' as const,
+          text: `[ERROR] ${code}: ${message}`,
+        },
+        {
+          type: 'text' as const,
+          text: JSON.stringify(data, null, 2),
+        },
+      ],
+      isError: true as const,
+    };
+  }
+
   return {
     content: [
       {

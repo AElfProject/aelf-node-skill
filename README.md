@@ -110,7 +110,8 @@ Copy and edit:
 cp .env.example .env
 ```
 
-- `AELF_PRIVATE_KEY`: optional env fallback for write operations
+- `AELF_PRIVATE_KEY`: optional env fallback for write operations (highest env priority)
+- `PORTKEY_PRIVATE_KEY`: optional secondary env fallback for shared-skill compatibility
 - Write tools (`aelf_send_contract_transaction`, `aelf_estimate_transaction_fee`) resolve signer as `explicit -> context -> env`
 - `PORTKEY_WALLET_PASSWORD`: optional password cache for EOA wallet context
 - `PORTKEY_CA_KEYSTORE_PASSWORD`: optional password cache for CA keystore context

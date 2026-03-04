@@ -110,7 +110,8 @@ aelf-node-setup claude
 cp .env.example .env
 ```
 
-- `AELF_PRIVATE_KEY`：写操作的 env 回退私钥（可选）
+- `AELF_PRIVATE_KEY`：写操作的 env 回退私钥（可选，env 优先级最高）
+- `PORTKEY_PRIVATE_KEY`：共享 skill 兼容的次级 env 回退私钥（可选）
 - 写操作工具（`aelf_send_contract_transaction`、`aelf_estimate_transaction_fee`）按 `explicit -> context -> env` 解析 signer
 - `PORTKEY_WALLET_PASSWORD`：EOA wallet context 的密码缓存（可选）
 - `PORTKEY_CA_KEYSTORE_PASSWORD`：CA keystore context 的密码缓存（可选）

@@ -6,12 +6,13 @@
       "name": "@blockchain-forever/aelf-node-skill",
       "dependencies": {
         "@modelcontextprotocol/sdk": "^1.26.0",
-        "aelf-sdk": "3.5.1-beta.0",
+        "aelf-sdk": "^3.5.1-beta.0",
         "commander": "^12.1.0",
         "zod": "^3.24.0",
       },
       "devDependencies": {
         "@types/bun": "latest",
+        "ajv": "^8.17.1",
         "typescript": "^5.7.0",
       },
     },

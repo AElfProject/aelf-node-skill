@@ -118,6 +118,7 @@ describe('query core flows', () => {
 
   it('returns error when private key is missing for signed tx build', async () => {
     delete process.env.AELF_PRIVATE_KEY;
+    delete process.env.PORTKEY_PRIVATE_KEY;
 
     const result = await estimateTransactionFee({
       rpcUrl: 'https://mock-node.test',
@@ -130,7 +131,7 @@ describe('query core flows', () => {
     });
 
     expect(result.ok).toBe(false);
-    expect(result.error?.code).toBe('ESTIMATE_TRANSACTION_FEE_FAILED');
-    expect(result.error?.message.includes('no signer available from explicit/context/env')).toBe(true);
+    expect(result.error?.code).toBe('SIGNER_CONTEXT_NOT_FOUND');
+    expect(result.error?.message.includes('active wallet context not found')).toBe(true);
   });
 });

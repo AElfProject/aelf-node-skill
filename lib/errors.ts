@@ -44,10 +44,17 @@ export function normalizeError(input: unknown, fallbackCode = 'UNKNOWN_ERROR'): 
   }
 
   if (input instanceof Error) {
+    const maybeCode =
+      typeof (input as { code?: unknown }).code === 'string'
+        ? String((input as { code?: unknown }).code)
+        : '';
+    const maybeDetails = (input as { details?: unknown }).details;
+    const maybeRaw = (input as { raw?: unknown }).raw;
     return {
-      code: fallbackCode,
+      code: maybeCode || fallbackCode,
       message: input.message,
-      raw: { name: input.name, stack: input.stack },
+      details: maybeDetails !== undefined ? stringifyRaw(maybeDetails) : '',
+      raw: maybeRaw !== undefined ? maybeRaw : { name: input.name, stack: input.stack },
     };
   }
 
