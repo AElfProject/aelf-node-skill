@@ -1,6 +1,7 @@
 import { existsSync, readFileSync } from 'node:fs';
 import AElf from 'aelf-sdk';
 import { unlockKeystore } from 'aelf-sdk/src/util/keyStore.js';
+import { SIGNER_ERROR_CODES } from './signer-error-codes.js';
 import {
   getActiveWalletProfile,
   type SignerContextInput,
@@ -48,20 +49,23 @@ function resolveExplicit(input: SignerContextInput): ResolvedPrivateKeyContext |
 function resolveContext(input: SignerContextInput): ResolvedPrivateKeyContext {
   const profile = getActiveWalletProfile();
   if (!profile) {
-    throw new SignerContextError('SIGNER_CONTEXT_NOT_FOUND', 'active wallet context not found');
+    throw new SignerContextError(
+      SIGNER_ERROR_CODES.CONTEXT_NOT_FOUND,
+      'active wallet context not found',
+    );
   }
 
   if (profile.walletType === 'EOA') {
     const password = input.password || process.env.PORTKEY_WALLET_PASSWORD;
     if (!password) {
       throw new SignerContextError(
-        'SIGNER_PASSWORD_REQUIRED',
+        SIGNER_ERROR_CODES.PASSWORD_REQUIRED,
         'password required for active EOA wallet (set PORTKEY_WALLET_PASSWORD or pass signer.password)',
       );
     }
     if (!profile.walletFile || !existsSync(profile.walletFile)) {
       throw new SignerContextError(
-        'SIGNER_CONTEXT_INVALID',
+        SIGNER_ERROR_CODES.CONTEXT_INVALID,
         `active EOA wallet file not found: ${profile.walletFile || '<empty>'}`,
       );
     }
@@ -70,14 +74,14 @@ function resolveContext(input: SignerContextInput): ResolvedPrivateKeyContext {
       typeof raw.AESEncryptPrivateKey === 'string' ? raw.AESEncryptPrivateKey : '';
     if (!encrypted) {
       throw new SignerContextError(
-        'SIGNER_CONTEXT_INVALID',
+        SIGNER_ERROR_CODES.CONTEXT_INVALID,
         'active EOA wallet file missing AESEncryptPrivateKey',
       );
     }
     const privateKey = AElf.wallet.AESDecrypt(encrypted, password);
     if (!privateKey) {
       throw new SignerContextError(
-        'SIGNER_PASSWORD_REQUIRED',
+        SIGNER_ERROR_CODES.PASSWORD_REQUIRED,
         'failed to decrypt active EOA wallet: wrong password or corrupted file',
       );
     }
@@ -95,13 +99,13 @@ function resolveContext(input: SignerContextInput): ResolvedPrivateKeyContext {
   const password = input.password || process.env.PORTKEY_CA_KEYSTORE_PASSWORD;
   if (!password) {
     throw new SignerContextError(
-      'SIGNER_PASSWORD_REQUIRED',
+      SIGNER_ERROR_CODES.PASSWORD_REQUIRED,
       'password required for active CA keystore (set PORTKEY_CA_KEYSTORE_PASSWORD or pass signer.password)',
     );
   }
   if (!profile.keystoreFile || !existsSync(profile.keystoreFile)) {
     throw new SignerContextError(
-      'SIGNER_CONTEXT_INVALID',
+      SIGNER_ERROR_CODES.CONTEXT_INVALID,
       `active CA keystore not found: ${profile.keystoreFile || '<empty>'}`,
     );
   }
@@ -109,7 +113,7 @@ function resolveContext(input: SignerContextInput): ResolvedPrivateKeyContext {
   const decrypted = unlockKeystore(raw.keystore, password);
   if (!decrypted?.privateKey) {
     throw new SignerContextError(
-      'SIGNER_PASSWORD_REQUIRED',
+      SIGNER_ERROR_CODES.PASSWORD_REQUIRED,
       'failed to decrypt active CA keystore: wrong password or corrupted file',
     );
   }
@@ -135,7 +139,7 @@ export function resolvePrivateKeyContext(
 
   if (mode === 'daemon') {
     throw new SignerContextError(
-      'SIGNER_DAEMON_NOT_IMPLEMENTED',
+      SIGNER_ERROR_CODES.DAEMON_NOT_IMPLEMENTED,
       'daemon signer provider is reserved for future release',
     );
   }
@@ -175,7 +179,10 @@ export function resolvePrivateKeyContext(
       };
     }
     if (mode === 'env') {
-      throw new SignerContextError('SIGNER_CONTEXT_NOT_FOUND', 'no private key available from env');
+      throw new SignerContextError(
+        SIGNER_ERROR_CODES.CONTEXT_NOT_FOUND,
+        'no private key available from env',
+      );
     }
   }
 
@@ -184,7 +191,7 @@ export function resolvePrivateKeyContext(
   }
 
   throw new SignerContextError(
-    'SIGNER_CONTEXT_NOT_FOUND',
+    SIGNER_ERROR_CODES.CONTEXT_NOT_FOUND,
     'no signer available from explicit/context/env',
   );
 }
