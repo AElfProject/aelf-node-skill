@@ -23,6 +23,34 @@ const server = new McpServer({
 });
 
 function asMcpResult(data: unknown) {
+  if (
+    data &&
+    typeof data === 'object' &&
+    'ok' in data &&
+    (data as { ok?: unknown }).ok === false
+  ) {
+    const record = data as Record<string, unknown>;
+    const error =
+      record.error && typeof record.error === 'object'
+        ? (record.error as Record<string, unknown>)
+        : {};
+    const code = typeof error.code === 'string' ? error.code : 'UNKNOWN_ERROR';
+    const message = typeof error.message === 'string' ? error.message : 'Unknown error';
+    return {
+      content: [
+        {
+          type: 'text' as const,
+          text: `[ERROR] ${code}: ${message}`,
+        },
+        {
+          type: 'text' as const,
+          text: JSON.stringify(data, null, 2),
+        },
+      ],
+      isError: true as const,
+    };
+  }
+
   return {
     content: [
       {
@@ -38,6 +66,20 @@ const chainTargetSchema = {
   nodeId: z.string().optional().describe('Optional imported node id'),
   rpcUrl: z.string().optional().describe('Direct rpc url override, only http/https is accepted'),
 };
+
+const signerContextSchema = z
+  .object({
+    signerMode: z.enum(['auto', 'explicit', 'context', 'env', 'daemon']).optional(),
+    walletType: z.enum(['EOA', 'CA']).optional(),
+    address: z.string().optional(),
+    password: z.string().optional(),
+    privateKey: z.string().optional(),
+    caHash: z.string().optional(),
+    caAddress: z.string().optional(),
+    network: z.enum(['mainnet', 'testnet']).optional(),
+  })
+  .optional()
+  .describe('Optional signer context. auto tries explicit → active context → env.');
 
 server.registerTool(
   'aelf_get_chain_status',
@@ -132,6 +174,8 @@ server.registerTool(
       waitForMined: z.boolean().optional().default(true),
       maxRetries: z.number().int().optional().default(20),
       retryIntervalMs: z.number().int().optional().default(1500),
+      signer: signerContextSchema,
+      signerContext: signerContextSchema,
     },
   },
   async input => asMcpResult(await sendContractTransaction(input)),
@@ -147,6 +191,8 @@ server.registerTool(
       contractAddress: z.string().optional(),
       methodName: z.string().optional(),
       params: z.record(z.unknown()).optional(),
+      signer: signerContextSchema,
+      signerContext: signerContextSchema,
     },
   },
   async input => asMcpResult(await estimateTransactionFee(input)),

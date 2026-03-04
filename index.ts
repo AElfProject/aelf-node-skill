@@ -14,6 +14,13 @@ export { importNode, listNodes } from './src/core/node-registry.js';
 
 export { resolveNode, listAvailableNodes } from './lib/node-router.js';
 export { clearSdkCaches, clearSdkCacheForRpc } from './lib/sdk-client.js';
+export { resolvePrivateKeyContext, SignerContextError } from './lib/signer-context.js';
+export {
+  readWalletContext,
+  writeWalletContext,
+  getActiveWalletProfile,
+  setActiveWalletProfile,
+} from './lib/wallet-context.js';
 export type {
   SkillResponse,
   SkillError,
@@ -27,4 +34,13 @@ export type {
   EstimateTransactionFeeInput,
   ImportNodeInput,
   NodeProfile,
+  SignerMode,
+  SignerProvider,
+  SignerContextInput,
 } from './lib/types.js';
+export type {
+  WalletType,
+  WalletSource,
+  ActiveWalletProfile,
+  WalletContextFile,
+} from './lib/wallet-context.js';

@@ -9,7 +9,7 @@ afterEach(() => {
 
 describe('response shape', () => {
   it('always returns traceId and ok fields', async () => {
-    globalThis.fetch = (async () => {
+    globalThis.fetch = ((async () => {
       return new Response(
         JSON.stringify({
           BestChainHash: '0xabc',
@@ -17,7 +17,7 @@ describe('response shape', () => {
         }),
         { status: 200, headers: { 'Content-Type': 'application/json' } },
       );
-    }) as typeof fetch;
+    }) as unknown) as typeof fetch;
 
     const result = await getChainStatus({ rpcUrl: 'https://mock-node.test' });
     expect(typeof result.ok).toBe('boolean');

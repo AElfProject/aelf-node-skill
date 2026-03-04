@@ -147,6 +147,7 @@ describe('core/contract', () => {
 
   it('fails send call when private key is missing', async () => {
     delete process.env.AELF_PRIVATE_KEY;
+    delete process.env.PORTKEY_PRIVATE_KEY;
 
     const result = await contractCore.sendContractTransaction({
       rpcUrl: 'https://mock-node.test',
@@ -159,7 +160,8 @@ describe('core/contract', () => {
     });
 
     expect(result.ok).toBe(false);
-    expect(result.error?.message.includes('AELF_PRIVATE_KEY is required for write operations')).toBe(true);
+    expect(result.error?.code).toBe('SIGNER_CONTEXT_NOT_FOUND');
+    expect(result.error?.message.includes('active wallet context not found')).toBe(true);
     expect(state.sendContractTransactionCalls.length).toBe(0);
   });
 

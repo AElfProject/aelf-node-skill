@@ -93,7 +93,9 @@ Reference file: [`mcp-config.example.json`](./mcp-config.example.json)
       "command": "bun",
       "args": ["run", "/ABSOLUTE/PATH/TO/src/mcp/server.ts"],
       "env": {
-        "AELF_PRIVATE_KEY": "your_private_key_here"
+        "AELF_PRIVATE_KEY": "optional_env_fallback_private_key",
+        "PORTKEY_WALLET_PASSWORD": "optional_wallet_password",
+        "PORTKEY_CA_KEYSTORE_PASSWORD": "optional_keystore_password"
       }
     }
   }
@@ -108,8 +110,13 @@ Copy and edit:
 cp .env.example .env
 ```
 
-- `AELF_PRIVATE_KEY`: required for write operations
-- `AELF_PRIVATE_KEY` is read from environment only in MCP mode (no private key tool input)
+- `AELF_PRIVATE_KEY`: optional env fallback for write operations (highest env priority)
+- `PORTKEY_PRIVATE_KEY`: optional secondary env fallback for shared-skill compatibility
+- Write tools (`aelf_send_contract_transaction`, `aelf_estimate_transaction_fee`) resolve signer as `explicit -> context -> env`
+- `PORTKEY_WALLET_PASSWORD`: optional password cache for EOA wallet context
+- `PORTKEY_CA_KEYSTORE_PASSWORD`: optional password cache for CA keystore context
+- `PORTKEY_SKILL_WALLET_CONTEXT_PATH`: optional override for active context path (`~/.portkey/skill-wallet/context.v1.json`)
+- `signerMode=daemon` is reserved and currently returns `SIGNER_DAEMON_NOT_IMPLEMENTED`
 - `AELF_NODE_AELF_RPC_URL`: optional override for AELF node
 - `AELF_NODE_TDVV_RPC_URL`: optional override for tDVV node
 - `AELF_NODE_REGISTRY_PATH`: optional custom registry path
@@ -153,6 +160,7 @@ bun run test:coverage:ci
 ## Security
 
 - Never put `AELF_PRIVATE_KEY` in prompts or channel outputs.
+- Active wallet context must not contain plaintext private keys.
 - Use environment variables for all secrets.
 
 ## License

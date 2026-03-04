@@ -24,6 +24,7 @@ import type {
   GetTransactionResultInput,
   SkillResponse,
 } from '../../lib/types.js';
+import { resolvePrivateKeyContext } from '../../lib/signer-context.js';
 
 const restClientCache = new LruCache<string, RestClient>(getRestClientCacheMax());
 
@@ -134,10 +135,13 @@ async function resolveRawTransaction(input: EstimateTransactionFeeInput, rpcUrl:
   validateContractAddress(input.contractAddress);
   validateMethodName(input.methodName);
 
-  const privateKey = getEoaPrivateKey(input.privateKey);
-  if (!privateKey) {
-    throw new Error('AELF_PRIVATE_KEY is required when rawTransaction is not provided');
-  }
+  const resolved = resolvePrivateKeyContext({
+    signerMode: 'auto',
+    ...(input.signer || {}),
+    ...(input.signerContext || {}),
+    privateKey: getEoaPrivateKey(input.privateKey),
+  });
+  const privateKey = resolved.privateKey;
 
   return buildSignedTransaction(
     rpcUrl,
