@@ -1,6 +1,8 @@
 declare module 'aelf-sdk' {
   export interface AelfWallet {
     address: string;
+    privateKey: string;
+    mnemonic?: string;
     [key: string]: unknown;
   }
 
@@ -36,6 +38,8 @@ declare module 'aelf-sdk' {
   export interface AelfWalletApi {
     createNewWallet(): AelfWallet;
     getWalletByPrivateKey(privateKey: string): AelfWallet;
+    AESEncrypt(privateKey: string, password: string): string;
+    AESDecrypt(encrypted: string, password: string): string;
   }
 
   export interface AelfStaticApi {
@@ -52,4 +56,19 @@ declare module 'aelf-sdk' {
   const AElf: AelfConstructor & AelfStaticApi;
 
   export default AElf;
+}
+
+declare module "aelf-sdk/src/util/keyStore.js" {
+  export function getKeystore(
+    account: { privateKey: string; mnemonic?: string; address?: string; nickName?: string },
+    password: string,
+    option?: Record<string, unknown>,
+  ): unknown;
+  export function unlockKeystore(keystore: unknown, password: string): {
+    privateKey: string;
+    mnemonic?: string;
+    address?: string;
+    nickName?: string;
+  };
+  export function checkPassword(keystore: unknown, password: string): boolean;
 }

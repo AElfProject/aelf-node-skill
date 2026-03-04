@@ -1,0 +1,17 @@
+{
+  "extends": "./tsconfig.base.json",
+  "include": [
+    "index.ts",
+    "aelf_node_skill.ts",
+    "src/**/*.ts",
+    "lib/**/*.ts",
+    "lib/**/*.d.ts",
+    "types/**/*.d.ts",
+    "bin/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "coverage",
+    "tests"
+  ]
+}
