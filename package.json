@@ -18,6 +18,7 @@
     "lib/",
     "bin/",
     "aelf_node_skill.ts",
+    "SKILL.md",
     "openclaw.json",
     "mcp-config.example.json",
     "README.md",

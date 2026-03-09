@@ -22,6 +22,23 @@ const server = new McpServer({
   version: packageJson.version,
 });
 
+const READ_ONLY_ANNOTATIONS = {
+  readOnlyHint: true,
+  read_only_hint: true,
+} as const;
+
+const LOCAL_WRITE_ANNOTATIONS = {
+  destructiveHint: true,
+  destructive_hint: true,
+} as const;
+
+const NETWORK_WRITE_ANNOTATIONS = {
+  destructiveHint: true,
+  destructive_hint: true,
+  openWorldHint: true,
+  side_effects_hint: true,
+} as const;
+
 function asMcpResult(data: unknown) {
   if (
     data &&
@@ -86,6 +103,7 @@ server.registerTool(
   {
     description: 'Get chain status from AElf node.',
     inputSchema: chainTargetSchema,
+    annotations: READ_ONLY_ANNOTATIONS,
   },
   async input => asMcpResult(await getChainStatus(input)),
 );
@@ -95,6 +113,7 @@ server.registerTool(
   {
     description: 'Get block height from AElf node.',
     inputSchema: chainTargetSchema,
+    annotations: READ_ONLY_ANNOTATIONS,
   },
   async input => asMcpResult(await getBlockHeight(input)),
 );
@@ -108,6 +127,7 @@ server.registerTool(
       blockHash: z.string().describe('Block hash'),
       includeTransactions: z.boolean().optional().default(false),
     },
+    annotations: READ_ONLY_ANNOTATIONS,
   },
   async input => asMcpResult(await getBlock(input)),
 );
@@ -120,6 +140,7 @@ server.registerTool(
       ...chainTargetSchema,
       transactionId: z.string().describe('Transaction id'),
     },
+    annotations: READ_ONLY_ANNOTATIONS,
   },
   async input => asMcpResult(await getTransactionResult(input)),
 );
@@ -132,6 +153,7 @@ server.registerTool(
       ...chainTargetSchema,
       contractAddress: z.string().describe('Contract address'),
     },
+    annotations: READ_ONLY_ANNOTATIONS,
   },
   async input => asMcpResult(await getContractViewMethods(input)),
 );
@@ -144,6 +166,7 @@ server.registerTool(
       ...chainTargetSchema,
       contractName: z.string().describe('Contract name, e.g. AElf.ContractNames.Token'),
     },
+    annotations: READ_ONLY_ANNOTATIONS,
   },
   async input => asMcpResult(await getSystemContractAddress(input)),
 );
@@ -158,6 +181,7 @@ server.registerTool(
       methodName: z.string().describe('Method name'),
       params: z.record(z.unknown()).optional(),
     },
+    annotations: READ_ONLY_ANNOTATIONS,
   },
   async input => asMcpResult(await callContractView(input)),
 );
@@ -177,6 +201,7 @@ server.registerTool(
       signer: signerContextSchema,
       signerContext: signerContextSchema,
     },
+    annotations: NETWORK_WRITE_ANNOTATIONS,
   },
   async input => asMcpResult(await sendContractTransaction(input)),
 );
@@ -194,6 +219,7 @@ server.registerTool(
       signer: signerContextSchema,
       signerContext: signerContextSchema,
     },
+    annotations: READ_ONLY_ANNOTATIONS,
   },
   async input => asMcpResult(await estimateTransactionFee(input)),
 );
@@ -208,6 +234,7 @@ server.registerTool(
       rpcUrl: z.string().describe('RPC URL'),
       enabled: z.boolean().optional().default(true),
     },
+    annotations: LOCAL_WRITE_ANNOTATIONS,
   },
   async input => asMcpResult(await importNode(input)),
 );
@@ -217,6 +244,7 @@ server.registerTool(
   {
     description: 'List imported nodes and all available nodes after priority merge.',
     inputSchema: {},
+    annotations: READ_ONLY_ANNOTATIONS,
   },
   async () => asMcpResult(await listNodes()),
 );

@@ -5,7 +5,7 @@
 [![Unit Tests](https://github.com/AElfProject/aelf-node-skill/actions/workflows/test.yml/badge.svg)](https://github.com/AElfProject/aelf-node-skill/actions/workflows/test.yml)
 [![Coverage](https://img.shields.io/endpoint?url=https://AElfProject.github.io/aelf-node-skill/coverage.json)](https://AElfProject.github.io/aelf-node-skill/coverage.json)
 
-AElf Node Skill 提供 MCP、CLI、SDK 三种接口，采用“读走 REST、合约执行走 SDK、手续费估算选择性 fallback”的架构访问 AElf 公共节点。
+AElf Node Skill 提供 MCP、CLI、SDK 三种接口，采用“读走 REST、合约执行走 SDK、手续费估算选择性 fallback”的架构访问 AElf 公共节点，并支持 OpenClaw 与 IronClaw 集成。
 
 ## 功能
 
@@ -62,19 +62,42 @@ bun run test:unit
 
 ## Setup CLI
 
-仓库内置一键 setup，支持 Claude、Cursor、OpenClaw。
+仓库内置一键 setup，支持 Claude、Cursor、OpenClaw、IronClaw。
 
 ```bash
 bun run setup claude
 bun run setup cursor
 bun run setup cursor --global
+bun run setup ironclaw
 bun run setup openclaw
 bun run setup openclaw --config-path /path/to/openclaw-config.json
 bun run setup list
 bun run setup uninstall claude
 bun run setup uninstall cursor --global
+bun run setup uninstall ironclaw
 bun run setup uninstall openclaw --config-path /path/to/openclaw-config.json
 ```
+
+## IronClaw
+
+```bash
+bun run setup ironclaw
+bun run setup uninstall ironclaw
+```
+
+IronClaw 安装会向 `~/.ironclaw/mcp-servers.json` 写入 stdio MCP entry，并把当前仓库的 `SKILL.md` 安装到 `~/.ironclaw/skills/aelf-node-skill/SKILL.md`。
+
+关于 trust model 的说明：
+
+- 如果要执行 `aelf_send_contract_transaction` 这类写能力，必须使用上面的 trusted skill 路径。
+- 不要把 `~/.ironclaw/installed_skills/` 当成主安装路径，否则写操作的 approval 行为会不稳定。
+- 当前 MCP server 会同时输出标准 MCP camelCase annotations 和 IronClaw 兼容 snake_case annotations，确保 IronClaw 能识别读写 hints。
+
+最短 smoke test：
+
+1. `bun run setup ironclaw`
+2. 让 IronClaw 查询 `latest block height on AELF`
+3. 再让它 `send a contract transaction`，确认执行前会出现 approval
 
 安装后的包也可直接执行：
 
