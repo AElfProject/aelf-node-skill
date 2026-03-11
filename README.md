@@ -5,7 +5,7 @@
 [![Unit Tests](https://github.com/AElfProject/aelf-node-skill/actions/workflows/test.yml/badge.svg)](https://github.com/AElfProject/aelf-node-skill/actions/workflows/test.yml)
 [![Coverage](https://img.shields.io/endpoint?url=https://AElfProject.github.io/aelf-node-skill/coverage.json)](https://AElfProject.github.io/aelf-node-skill/coverage.json)
 
-AElf Node Skill provides MCP, CLI, and SDK interfaces for AElf public nodes with `REST for reads, SDK for contract execution, and selective fallback for fee estimate`.
+AElf Node Skill provides MCP, CLI, and SDK interfaces for AElf public nodes with `REST for reads, SDK for contract execution, and selective fallback for fee estimate`, plus OpenClaw and IronClaw integration.
 
 ## Features
 
@@ -62,19 +62,49 @@ bun run test:unit
 
 ## Setup CLI
 
-This repository includes a one-command setup CLI for Claude, Cursor, and OpenClaw.
+This repository includes a one-command setup CLI for Claude, Cursor, OpenClaw, and IronClaw.
 
 ```bash
 bun run setup claude
 bun run setup cursor
 bun run setup cursor --global
+bun run setup ironclaw
 bun run setup openclaw
 bun run setup openclaw --config-path /path/to/openclaw-config.json
 bun run setup list
 bun run setup uninstall claude
 bun run setup uninstall cursor --global
+bun run setup uninstall ironclaw
 bun run setup uninstall openclaw --config-path /path/to/openclaw-config.json
 ```
+
+## IronClaw
+
+```bash
+bun run setup ironclaw
+bun run setup uninstall ironclaw
+```
+
+The IronClaw setup writes a stdio MCP entry to `~/.ironclaw/mcp-servers.json` and installs this repo's `SKILL.md` to `~/.ironclaw/skills/aelf-node-skill/SKILL.md`.
+
+Important trust model note:
+
+- Use the trusted skill path above for write-capable flows such as `aelf_send_contract_transaction`.
+- Do not rely on `~/.ironclaw/installed_skills/` for the primary install path when you need write approval behavior.
+- This MCP server emits both standard MCP camelCase annotations and IronClaw-compatible snake_case annotations so the current IronClaw source can honor read/write hints.
+
+Remote activation contract:
+
+- GitHub repo/tree URLs are discovery sources only, not the final IronClaw install payload.
+- Preferred IronClaw activation from npm: `bunx -p @blockchain-forever/aelf-node-skill aelf-node-setup ironclaw`
+- Prefer ClawHub / managed install for OpenClaw when available; otherwise use `bunx -p @blockchain-forever/aelf-node-skill aelf-node-setup openclaw`
+- Local repo checkout remains a development smoke-test path only.
+
+Minimal smoke test:
+
+1. `bun run setup ironclaw`
+2. Ask IronClaw for `latest block height on AELF`
+3. Ask it to `send a contract transaction` and confirm approval appears before execution
 
 Installed package users can also run:
 
